@@ -88,8 +88,8 @@ function fetchTrack($accessToken) {
     }
 }
 
-// Fetch most played tracks
-function fetchMostPlayedTracks($accessToken) {
+// Fetch most played tracks with a specified limit and offset
+function fetchMostPlayedTracks($accessToken, $limit, $offset) {
     $context = stream_context_create([
         'http' => [
             'header' => "Authorization: Bearer $accessToken",
@@ -98,7 +98,8 @@ function fetchMostPlayedTracks($accessToken) {
         ]
     ]);
 
-    $response = file_get_contents('https://api.spotify.com/v1/me/top/tracks?limit=5', false, $context);
+    // Get the most played tracks from Spotify API with the specified limit and offset
+    $response = file_get_contents('https://api.spotify.com/v1/me/top/tracks?limit=' . $limit . '&offset=' . $offset, false, $context);
 
     if ($response === FALSE) {
         echo json_encode(['error' => 'Unable to fetch most played tracks.']);
@@ -108,6 +109,27 @@ function fetchMostPlayedTracks($accessToken) {
     echo $response; // Return the most played tracks as JSON
 }
 
+
+// Fetch playlists (collaborative, public, private)
+function fetchPlaylists($accessToken) {
+    $context = stream_context_create([
+        'http' => [
+            'header' => "Authorization: Bearer $accessToken",
+            'method' => 'GET',
+            'ignore_errors' => true
+        ]
+    ]);
+
+    // Get the playlists from Spotify API
+    $response = file_get_contents('https://api.spotify.com/v1/me/playlists?limit=50', false, $context);
+
+    if ($response === FALSE) {
+        echo json_encode(['error' => 'Unable to fetch playlists.']);
+        return;
+    }
+
+    echo $response; // Return the playlists as JSON
+}
 // Main flow
 $tokens = fetchTokensFromJson();
 $accessToken = $tokens['access_token'] ?? null;
@@ -139,13 +161,17 @@ if (!$accessToken || ($tokens['expires_in'] ?? 0) < time()) {
     }
 }
 
-// Determine action
+// Determine action and handle requests
 $action = $_GET['action'] ?? '';
+$limit = $_GET['limit'] ?? 10; // Default limit to 10 if not provided
+$offset = $_GET['offset'] ?? 0; // Default offset to 0 if not provided
+
 if ($action === 'currently-playing') {
     fetchTrack($accessToken);
 } elseif ($action === 'most-played') {
-    fetchMostPlayedTracks($accessToken);
+    fetchMostPlayedTracks($accessToken, $limit, $offset);
+} elseif ($action === 'playlists') {
+    fetchPlaylists($accessToken);
 } else {
     echo json_encode(['error' => 'Invalid action.']);
 }
-?>
