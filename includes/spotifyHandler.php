@@ -6,8 +6,9 @@ use Dotenv\Dotenv;
 $dotenv = Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 
-$clientId = '';
-$clientSecret = '';
+// Fetch client ID, client secret, and redirect URI from .env
+$clientId = $_ENV['SPOTIFY_CLIENT_ID'];
+$clientSecret = $_ENV['SPOTIFY_CLIENT_SECRET'];
 $tokenFilePath = '../tokens.json'; // Path to the JSON file storing tokens
 
 // Fetch tokens from JSON file

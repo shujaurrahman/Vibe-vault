@@ -7,10 +7,10 @@ use Dotenv\Dotenv;
 $dotenv = Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 
-$clientId = '5fe8f8ff8b56468f8c9d4e0b77197faa';
-$clientSecret = '2b7f7a36211149c4b8b110050890b8b2';
-$redirectUri = 'http://localhost/vibevault/access.php';
-$tokenFilePath = 'tokens.json';
+// Fetch client ID, client secret, and redirect URI from .env
+$clientId = $_ENV['SPOTIFY_CLIENT_ID'];
+$clientSecret = $_ENV['SPOTIFY_CLIENT_SECRET'];
+$redirectUri = $_ENV['SPOTIFY_REDIRECT_URI'];
 
 // Exchange the authorization code for access and refresh tokens
 function exchangeAuthCodeForTokens($authCode) {
