@@ -2,7 +2,7 @@
 
 VibeVault is a Spotify integration project that fetches a user's currently playing track, most played tracks, and provides basic playlist interactions using Spotify's Web API. This project allows you to authenticate users via Spotify, retrieve access tokens, and handle their Spotify data for a personalized music experience.
 
-[Download and Play the Demo Video](https://github.com/shujaurrahman/Vibe-vault/raw/main/videos/demo.mp4)
+![Screenshot main](./images/main.png)
 
 ## Table of Contents
 
