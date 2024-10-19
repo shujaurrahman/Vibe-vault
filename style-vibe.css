@@ -180,7 +180,6 @@ data-styled.g4[id="sc-elDIKY"] {
     border-bottom: none;
     transition: border-bottom 0.1s ease;
 }
-
 /*!sc*/
 .Dhbnx:hover {
     cursor: pointer;
@@ -484,4 +483,12 @@ data-styled.g44[id="sc-keyframes-kGLwuF"] {
     content: "kGLwuF,"
 }
 
-/*!sc*/
+
+@media (min-width: 800px) {
+    .cMYPoz {
+        padding: var(--space40) 0;
+        margin: 0px auto;
+        display: grid;
+        grid-template-columns: 15% auto 25%;
+    }
+}
