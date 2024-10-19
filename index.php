@@ -26,8 +26,8 @@
                 </h1>
             </a>
             <nav class="sc-elDIKY juvebG">
-                <a selected="" class="sc-fQpRED cxdHYg" href="/">Vibe Vault</a>
-                <a class="sc-fQpRED Dhbnx" href="/playlist/">Playlists</a>
+                <a selected="" class="sc-fQpRED cxdHYg" href="#">Home</a>
+                <a class="sc-fQpRED Dhbnx" href="playlists.php">Playlists</a>
             </nav>
         </div>
     </div>
@@ -49,14 +49,11 @@
 
         <div class="sc-eJgwjL bBOlEG " id="most-played">
         </div>
+        <a selected="" class="sc-fQpRED cxdHYg" href="#">Load more</a>
     </div>
 
     <div class="sc-dsLQwm jLnLFD">
         <div class="sc-iKTcqh jHpHUL">
-            <div class="sc-gnpbhQ jsvwDU">
-                <h2>ABOUT</h2>
-                <p>A micro web showcasing the 5 most played songs, along with a carefully curated playlist by Shuja tailored to different moods.</p>
-            </div>
             <p class="sc-la-DxNn huYjqW">
                 Say hey @
                 <a href="https://shujaurrahman.me" target="_blank" class="sc-iCZwEW fxhTjv">shujaurrahman.me</a>
@@ -98,44 +95,64 @@ function fetchCurrentlyPlaying() {
         }
     });
 }
+let songCount = 10;  // Initially load 10 songs
+let offset = 0;      // Initialize offset
 
-
-
-    function fetchMostPlayedTracks() {
+function fetchMostPlayedTracks() {
     $.ajax({
-        url: './includes/spotifyHandler.php?action=most-played',
+        url: `./includes/spotifyHandler.php?action=most-played&limit=${songCount}&offset=${offset}`,
         method: 'GET',
         dataType: 'json',
         success: function(data) {
             if (data.error) {
                 $('#most-played').html('<p>' + data.error + '</p>');
             } else {
-                // Clear the existing items before populating
-                $('#most-played').empty();
+                // Clear the existing items before populating on first load
+                if (songCount === 10) {
+                    $('#most-played').empty();
+                }
 
                 // Display most played tracks
                 data.items.forEach(function(track, index) {
-                    const songNumber = (index + 1).toString().padStart(3, '0'); // Format number with leading zeros
+                    const songNumber = (offset + index + 1).toString().padStart(3, '0'); // Format number with leading zeros
 
-                    // Extract album name and album image
-                    const albumName = track.album.name; // Assuming track.album is the album object
+                    // Shorten the song name, artist name, and album name to 3 words
+                    let shortenedName = track.name.split(' ').slice(0, 3).join(' ');
+                    if (track.name.split(' ').length > 3) {
+                        shortenedName += '..';
+                    }
 
-                    const trackHtml = 
-                       `<div class="sc-epPVmt NsFvF" >
-                        <a href="${track.external_urls.spotify}"> <!-- Use Spotify URL for the song -->
+                    let artistName = track.artists[0].name.split(' ').slice(0, 3).join(' ');
+                    if (track.artists[0].name.split(' ').length > 3) {
+                        artistName += '..';
+                    }
+
+                    let albumName = track.album.name.split(' ').slice(0, 3).join(' ');
+                    if (track.album.name.split(' ').length > 3) {
+                        albumName += '..';
+                    }
+
+                    // Create the track HTML
+                    const trackHtml = `
+                    <div class="sc-epPVmt NsFvF">
+                        <a href="${track.external_urls.spotify}">
                             <div class="sc-fpSrms bIOudy">
                                 <div class="sc-hfvVTD wVBPe">
                                     <span class="sc-ifyrTC fIZweP">${songNumber}</span>
-                                    <span class="sc-dENhDJ diKIEv">${track.name}, ${track.artists.map(artist => artist.name).join(', ')}</span>
+                                    <span class="sc-dENhDJ diKIEv">${shortenedName}</span>
                                 </div>
                                 <div class="sc-eEPDDI GTFKC">
-                                    <span>${albumName}</span>
+                                    <span>${artistName}</span>
                                 </div>
                             </div>
                         </a>
-                             </div>`;
+                    </div>`;
+
                     $('#most-played').append(trackHtml);
                 });
+
+                // Update offset for the next batch
+                offset += data.items.length; // Update offset based on number of items fetched
             }
         },
         error: function() {
@@ -144,12 +161,24 @@ function fetchCurrentlyPlaying() {
     });
 }
 
+// Function to load more tracks when "Load more" is clicked
+function loadMoreTracks() {
+    fetchMostPlayedTracks();  // Fetch more tracks
+}
 
-    // Fetch currently playing track every 30 seconds
-    setInterval(fetchCurrentlyPlaying, 30000);
-    // Fetch initially on page load
-    fetchCurrentlyPlaying();
-    fetchMostPlayedTracks();
+// Fetch currently playing track every 30 seconds
+setInterval(fetchCurrentlyPlaying, 30000);
+
+// Fetch initially on page load
+fetchCurrentlyPlaying();
+fetchMostPlayedTracks();
+
+// Add event listener to "Load more" button
+$(document).on('click', '.sc-fQpRED.cxdHYg', function(e) {
+    e.preventDefault();
+    loadMoreTracks();
+});
+
 </script>
 
 </body>
