@@ -76,17 +76,17 @@ function fetchCurrentlyPlaying() {
             } else {
                 if (data.is_playing) {
                     // If a track is currently playing, update label and display info
-                    $('.sc-fLVwEd.gHbwDC p').text('Currently Playing');
+                    $('.sc-fLVwEd.gHbwDC p').text('Playing');
                 } else {
                     // If no track is playing, show last played track and update label
                     $('.sc-fLVwEd.gHbwDC p').text('Last Played');
                 }
                 
                 // Display the track info
-                $('#current-song').html('<p>' + data.name + ' by ' + data.artists[0].name + '</p>');
+                $('#current-song').html('<p>' + data.name +'</p>');
                 
                 // Display album info
-                $('#current-album').html('<p>' + data.album.name + '</p>');
+                $('#current-album').html('<p>' + data.artists[0].name + '</p>');
             }
         },
         error: function() {
