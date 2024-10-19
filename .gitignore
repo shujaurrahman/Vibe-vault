@@ -1,0 +1,4 @@
+/vendor
+*.DS_store
+.env
+tokens.json
